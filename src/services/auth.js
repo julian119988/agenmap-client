@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   googleProvider,
   facebookProvider,
@@ -63,15 +64,15 @@ export const logOut = () => {
       console.log(error);
     });
 };
-export const userLoggedIn = () => {
-  const response = firebase.auth().onAuthStateChanged((user) => {
+
+export const useUserLoggedin = () => {
+  const [user, setUser] = useState(undefined);
+  firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      console.log(user);
-      return user;
+      setUser(user);
     } else {
-      console.log("No user logged in ");
-      return null;
+      setUser(null);
     }
   });
-  return response;
+  return user;
 };

@@ -11,47 +11,66 @@ import {
   facebookAuth,
   twitterAuth,
   githubAuth,
-  userLoggedIn,
+  useUserLoggedin,
   logOut,
 } from "../../services/auth";
+import Loader from "react-loader-spinner";
 
 export default function Login(props) {
-  const [user, setUser] = useState(null);
   const themeMode = useContext(ThemeContext);
-  useEffect(() => {
-    const response = userLoggedIn();
-    setUser(response);
-    console.log(response);
-  });
+  const user = useUserLoggedin();
 
   return (
     <>
-      {user ? (
+      {user === undefined ? (
         <Center>
-          <LogOut onClick={logOut}>Log out</LogOut>
-          <LogOut onClick={() => console.log(user)}>Log user</LogOut>
+          <Loader type="TailSpin" color="#00BFFF" height={80} width={80} />
         </Center>
-      ) : (
+      ) : user === null ? (
         <Center>
           <Card>
-            <Titulo themeMode={themeMode}>Login</Titulo>
+            <Container style={{ justifyContent: "center" }}>
+              <Titulo themeMode={themeMode}>Login</Titulo>
+            </Container>
+
             <Column>
-              <Label>Email</Label>
-              <Input />
-              <Label>Password</Label>
-              <Input />
-              <Info themeMode={themeMode}>
-                <LS.NavFixedItemLink>
-                  <Link to={"#"}>Forgot your password?</Link>
-                </LS.NavFixedItemLink>
-              </Info>
-              <Info themeMode={themeMode}>Or</Info>
-              <Info themeMode={themeMode}>
-                <LS.NavFixedItemLink>
-                  <Link to={"#"}>Sign up here</Link>
-                </LS.NavFixedItemLink>
-              </Info>
+              <Container
+                style={{
+                  flexDirection: "column",
+                  paddingLeft: "10%",
+                  paddingRight: "10%",
+                }}
+              >
+                <Form>
+                  <Label>Email</Label>
+                  <Input type="email" placeholder="example@example.com" />
+                  <Label>Password</Label>
+                  <Input type="password" placeholder="***********" />
+                </Form>
+              </Container>
+              <Container
+                style={{
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: "3vh",
+                }}
+              >
+                <Info themeMode={themeMode}>
+                  <LS.NavFixedItemLink>
+                    <Link to={"#"}>Forgot your password?</Link>
+                  </LS.NavFixedItemLink>
+                </Info>
+                <Info themeMode={themeMode}>Or</Info>
+                <Info themeMode={themeMode}>
+                  <LS.NavFixedItemLink>
+                    <p style={{ margin: "0" }}>Have an account?</p>
+                    <Link to={"#"}>Sign up here</Link>
+                  </LS.NavFixedItemLink>
+                </Info>
+              </Container>
             </Column>
+
             <Separator />
             <Row>
               <MediaIcons
@@ -69,10 +88,25 @@ export default function Login(props) {
             </Row>
           </Card>
         </Center>
+      ) : (
+        <Center>
+          <LogOut onClick={logOut}>Log out</LogOut>
+          <LogOut onClick={() => console.log(user)}>Log user</LogOut>
+        </Center>
       )}
     </>
   );
 }
+const Form = styled.form`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+`;
 
 const Titulo = styled.h2`
   color: ${(props) => props.themeMode.title.color}
@@ -96,15 +130,14 @@ const Center = styled.div`
   align-content: center;
   height: 100%;
 `;
-const Label = styled.label`
-  width: 80%;
-`;
+const Label = styled.label``;
 const Input = styled.input`
   border-radius: 5vh;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   border: none;
   outline: none;
-  width: 80%;
+  padding-left: 2vh;
+  padding-right: 2vh;
 `;
 const Separator = styled.hr`
   margin: 0;
@@ -128,13 +161,14 @@ const Row = styled.div`
   align-items: center;
   width: 70%;
 `;
-const Info = styled.p`
+const Info = styled.span`
   color: ${(props) => props.themeMode.info.color};
   margin: 0;
 `;
 const LS = {};
 LS.NavFixedItemLink = styled.div`
   display: flex;
+  flex-direction: column;
   a {
     display: flex;
     justify-content: center;
