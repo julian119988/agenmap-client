@@ -8,10 +8,10 @@
       "type": "image/x-icon"
     },
     {
-      "src": "mapa512",
+      "src": "mapa512.png",
       "type": "image/png",
       "sizes": "512x512"
-    },
+    }
   ],
   "start_url": ".",
   "display": "standalone",
