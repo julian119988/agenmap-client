@@ -48,7 +48,7 @@ export default function Home() {
         setFilteredStays(finalArray);
     }
     function setLocationOnClick(event) {
-        setLocation(event.target.lastChild.nodeValue); // continue here tomorrow
+        setLocation(event.target.lastChild.nodeValue); // continue here tomorro
     }
     async function fetchData() {
         return await db.collection("stays").get();
