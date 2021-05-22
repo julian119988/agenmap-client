@@ -1,35 +1,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&display=swap");
 html,
 body,
 #root {
-  height: 100%;
-  height: -moz-available;
-  height: -webkit-fill-available;
-  margin: 0;
-  padding: 0;
+    height: 100%;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    margin: 0;
+    padding: 0;
 }
 * {
-  font-family: "Montserrat", sans-serif;
-  box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+    box-sizing: border-box;
 }
 a:visited {
-  text-decoration: none;
-  color: royalblue;
+    text-decoration: none;
+    color: royalblue;
 }
 a:hover {
-  opacity: 0.5;
+    opacity: 0.5;
 }
 a {
-  color: royalblue;
+    color: royalblue;
 } /* Globally */
 
 /* Each state */
 
 a:focus {
-  text-decoration: royalblue;
-  opacity: 0.5;
+    text-decoration: royalblue;
+    opacity: 0.5;
 }
 a:active {
-  text-decoration: none;
-  color: blue;
+    text-decoration: none;
+    color: blue;
 }
