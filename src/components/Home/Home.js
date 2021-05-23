@@ -8,16 +8,15 @@ import pinIcon from "../../images/pin.svg";
 import Loader from "react-loader-spinner";
 
 export default function Home() {
-    const [location, setLocation] = useState();
+    const [guests, setGuests] = useState(0);
+    const [location, setLocation] = useState("");
     const [openMenu, setOpenMenu] = useState(false);
     const [display, setDisplay] = useState("none");
     const [animationGray, setAnimationGray] = useState(appear);
     const [animationMenu, setAnimationMenu] = useState(slideDown);
-    const [changeColor, setChangeColor] = useState({
-        color: "gray;",
-    });
     const [stays, setStays] = useState([]);
     const [filteredStays, setFilteredStays] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
 
     useEffect(async () => {
         const data = await fetchData();
@@ -31,6 +30,9 @@ export default function Home() {
         filterRepeatedStays();
     }, [stays]);
 
+    useEffect(() => {
+        filterSearchResults();
+    }, [location]);
     function filterRepeatedStays() {
         let finalArray = [];
         stays.map((item) => {
@@ -47,6 +49,22 @@ export default function Home() {
         });
         setFilteredStays(finalArray);
     }
+
+    function filterSearchResults() {
+        const tempArray = [];
+        filteredStays.map((item) => {
+            if (
+                !(
+                    item.toLowerCase().search(location.toLocaleLowerCase()) ===
+                    -1
+                )
+            ) {
+                tempArray.push(item);
+            }
+        });
+        setSearchResults(tempArray);
+    }
+
     function setLocationOnClick(event) {
         setLocation(event.target.lastChild.nodeValue); // continue here tomorro
     }
@@ -54,17 +72,6 @@ export default function Home() {
         return await db.collection("stays").get();
     }
 
-    function checkLocation() {
-        if (location !== "Add location") {
-            setChangeColor({
-                color: "black;",
-            });
-        } else {
-            setChangeColor({
-                color: "gray;",
-            });
-        }
-    }
     useEffect(() => {
         if (openMenu) {
             setDisplay("flex");
@@ -78,6 +85,11 @@ export default function Home() {
             setAnimationMenu(slideUp);
         }
     }, [openMenu]);
+    function maxGuests(event) {
+        if (event.target.value.length >= 2) {
+            event.target.value = event.target.value.slice(0, 2);
+        }
+    }
 
     return (
         <Main>
@@ -91,22 +103,47 @@ export default function Home() {
                 <SearchPillMenu>
                     <LocationDivMenu>
                         <Subtitle>location</Subtitle>
-                        <LocationInput
+                        <LocationInputMenu
                             type="text"
                             placeholder="Add location"
                             value={location}
                             onChange={(event) =>
                                 setLocation(event.target.value)
                             }
-                        ></LocationInput>
+                        ></LocationInputMenu>
                     </LocationDivMenu>
                     <GuestsDivMenu>
                         <Subtitle>guests</Subtitle>
-                        <GuestInput placeholder="Add guests"></GuestInput>
+                        <GuestInput
+                            placeholder="Add guests"
+                            type="number"
+                            onInput={maxGuests}
+                            onChange={(event) => setGuests(event.target.value)}
+                            value={guests || undefined}
+                        ></GuestInput>
                     </GuestsDivMenu>
                 </SearchPillMenu>
                 <LocationListDiv>
-                    {filteredStays[0] ? (
+                    {searchResults[0] ? (
+                        <LocationList>
+                            {searchResults.map((item, index) => (
+                                <LocationItemList
+                                    key={index}
+                                    onClick={setLocationOnClick}
+                                >
+                                    <img
+                                        src={pinIcon}
+                                        style={{
+                                            width: "4vh",
+                                            height: "4vh",
+                                            marginRight: "1vh",
+                                        }}
+                                    ></img>
+                                    {item}
+                                </LocationItemList>
+                            ))}
+                        </LocationList>
+                    ) : filteredStays ? (
                         <LocationList>
                             {filteredStays.map((item, index) => (
                                 <LocationItemList
@@ -115,7 +152,11 @@ export default function Home() {
                                 >
                                     <img
                                         src={pinIcon}
-                                        style={{ width: "4vh", height: "4vh" }}
+                                        style={{
+                                            width: "4vh",
+                                            height: "4vh",
+                                            marginRight: "1vh",
+                                        }}
                                     ></img>
                                     {item}
                                 </LocationItemList>
@@ -132,7 +173,7 @@ export default function Home() {
                         </Center>
                     )}
                 </LocationListDiv>
-                <SearchButtonMenu onClick={filterRepeatedStays}>
+                <SearchButtonMenu onClick={() => setOpenMenu(!openMenu)}>
                     <SearchIconColorChanger color="white" />
                     Search
                 </SearchButtonMenu>
@@ -143,15 +184,24 @@ export default function Home() {
                 onClick={() => setOpenMenu(!openMenu)}
             ></GrayMenuDown>
             <SearchPill>
-                <LocationDiv onClick={() => setOpenMenu(!openMenu)}>
-                    <Location changeColor={changeColor}>{location}</Location>
-                </LocationDiv>
-                <Guests type="number" placeholder="Add guests" />
+                <LocationInput
+                    type="text"
+                    value={location}
+                    onClick={() => setOpenMenu(!openMenu)}
+                    placeholder="Add location"
+                    readonly
+                ></LocationInput>
+                <Guests
+                    type="number"
+                    placeholder="Add guests"
+                    onInput={maxGuests}
+                    onChange={(event) => setGuests(event.target.value)}
+                    value={guests || undefined}
+                />
                 <SearchButton
-                    type="submit"
-                    value=" "
+                    type="button"
                     image={searchIcon}
-                    onClick={() => console.log(stays)}
+                    onClick={() => console.log("Realizando busqueda")}
                 />
             </SearchPill>
             {stays[0] ? (
@@ -188,6 +238,7 @@ const LocationItemList = styled.li`
     font-weight: normal;
     font-size: 14px;
     line-height: 18px;
+    margin-top: 1vh;
 `;
 const LocationList = styled.ul`
     margin: 0;
@@ -247,7 +298,7 @@ const GuestInput = styled.input`
     font-size: 14px;
     line-height: 18px;
 `;
-const LocationInput = styled.input`
+const LocationInputMenu = styled.input`
     margin: 0;
     padding: 0;
     border: none;
@@ -389,7 +440,8 @@ const SearchPill = styled.div`
     display: flex;
     flex-direction: row;
 `;
-const LocationDiv = styled.div`
+const LocationInput = styled.input`
+    text-align: center;
     border-radius: 16px;
     border: none;
     border-right: 1px solid #f2f2f2;
@@ -400,6 +452,7 @@ const LocationDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: white;
 `;
 const Guests = styled.input`
     left: 46%;
