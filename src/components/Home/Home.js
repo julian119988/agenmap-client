@@ -38,11 +38,14 @@ export default function Home() {
         stays.map((item) => {
             let isNew = true;
             for (let index = 0; index <= finalArray.length; index++) {
-                if (finalArray[index] === `${item.city}, ${item.country}`) {
+                if (
+                    finalArray[index]?.city === item.city &&
+                    finalArray[index]?.country === item.country
+                ) {
                     isNew = false;
                 }
                 if (isNew && finalArray.length === index) {
-                    finalArray.push(`${item.city}, ${item.country}`);
+                    finalArray.push({ city: item.city, country: item.country });
                     break;
                 }
             }
@@ -51,13 +54,19 @@ export default function Home() {
     }
 
     function filterSearchResults() {
+        // seguir aca
         const tempArray = [];
         filteredStays.map((item) => {
             if (
                 !(
-                    item.toLowerCase().search(location.toLocaleLowerCase()) ===
-                    -1
+                    item.city
+                        .toLowerCase()
+                        .search(location.toLocaleLowerCase()) === -1
                 )
+            ) {
+                tempArray.push(item);
+            } else if (
+                !item.country.toLowerCase().search(location.toLocaleLowerCase())
             ) {
                 tempArray.push(item);
             }
@@ -132,6 +141,7 @@ export default function Home() {
                                     onClick={setLocationOnClick}
                                 >
                                     <img
+                                        alt="pin icon"
                                         src={pinIcon}
                                         style={{
                                             width: "4vh",
@@ -139,7 +149,7 @@ export default function Home() {
                                             marginRight: "1vh",
                                         }}
                                     ></img>
-                                    {item}
+                                    {`${item.city}, ${item.country}`}
                                 </LocationItemList>
                             ))}
                         </LocationList>
@@ -151,6 +161,7 @@ export default function Home() {
                                     onClick={setLocationOnClick}
                                 >
                                     <img
+                                        alt="pin icon"
                                         src={pinIcon}
                                         style={{
                                             width: "4vh",
@@ -158,7 +169,7 @@ export default function Home() {
                                             marginRight: "1vh",
                                         }}
                                     ></img>
-                                    {item}
+                                    {`${item.city}, ${item.country}`}
                                 </LocationItemList>
                             ))}
                         </LocationList>

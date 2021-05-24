@@ -40,7 +40,7 @@ export default function Navbar() {
     return (
         <Row themeMode={themeMode}>
             <Container>
-                <Logo src={image} />
+                <Logo src={image} alt="agenmap logo" />
                 <Title themeMode={themeMode}>
                     <Link to="/">agenmap</Link>
                 </Title>

@@ -22,7 +22,19 @@ export function App() {
     const [selectedTheme, setSelectedTheme] = useState(theme.light);
     const [image, setImage] = useState(sun);
     const [userLoggedIn, setUserLoggedIn] = useState(null);
+    const [initialVh, setInitialVh] = useState("");
     const user = useUserLoggedin();
+
+    useEffect(() => {
+        console.log(`${window.innerHeight * 0.01}px`);
+        setInitialVh(() => `${window.innerHeight * 0.01}px`);
+    }, []);
+    useEffect(() => {
+        window.addEventListener("resize", () => {
+            // We execute the same script as before
+            console.log(initialVh);
+        });
+    }, [initialVh]);
 
     function changeTheme() {
         if (selectedTheme === theme.light) {

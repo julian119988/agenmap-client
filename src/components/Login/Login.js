@@ -137,21 +137,25 @@ export default function Login() {
                             </Row>
                             <Row>
                                 <MediaIcons
+                                    alt="Facebook logo"
                                     src={facebook}
                                     alt="Facebook logo"
                                     onClick={facebookAuth}
                                 />
                                 <MediaIcons
+                                    alt="Google logo"
                                     src={google}
                                     alt="Google logo"
                                     onClick={googleAuth}
                                 />
                                 <MediaIcons
+                                    alt="Twitter logo"
                                     src={twitter}
                                     alt="Twitter logo"
                                     onClick={twitterAuth}
                                 />
                                 <MediaIcons
+                                    alt="Github logo"
                                     src={github}
                                     alt="Github logo"
                                     onClick={githubAuth}
