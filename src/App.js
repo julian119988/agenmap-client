@@ -53,6 +53,7 @@ export function App() {
     useEffect(() => {
         isUserLoggedIn(user);
     }, [user]);
+
     return (
         <ThemeContext.Provider value={selectedTheme}>
             <UserContext.Provider value={userLoggedIn}>
