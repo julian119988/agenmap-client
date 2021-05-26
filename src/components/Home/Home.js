@@ -21,7 +21,11 @@ export default function Home() {
     const [searchResults, setSearchResults] = useState([]);
     const [displayStays, setDisplayStays] = useState();
     const [notFound, setNotFound] = useState(null);
+    const [theme, setTheme] = useState({
+        crossIcon: "black",
+    });
     const buttonRef = useRef();
+    const locationRef = useRef();
 
     useEffect(async () => {
         const data = await fetchData();
@@ -33,6 +37,7 @@ export default function Home() {
     }, []);
     useEffect(() => {
         filterRepeatedStays();
+        console.log(document.getElementById("freepik_stories-house-searching"));
     }, [stays]);
 
     useEffect(() => {
@@ -56,6 +61,19 @@ export default function Home() {
             }
         });
         setFilteredStays(finalArray);
+    }
+
+    function changeThemeManually() {
+        let currentTheme = localStorage.getItem("agenmapTheme");
+        if (currentTheme === "dark") {
+            setTheme({
+                crossIcon: "rgba(235,87,87,0.9)",
+            });
+        } else {
+            setTheme({
+                crossIcon: "black",
+            });
+        }
     }
 
     function filterSearchResults() {
@@ -113,7 +131,7 @@ export default function Home() {
     }
 
     function setLocationOnClick(event) {
-        setLocation(event.target.lastChild.nodeValue); // continue here tomorro
+        console.log(event.target);
     }
     async function fetchData() {
         return await db.collection("stays").get();
@@ -131,23 +149,32 @@ export default function Home() {
             setAnimationGray(disappear);
             setAnimationMenu(slideUp);
         }
+        changeThemeManually();
     }, [openMenu]);
+
     function maxGuests(event) {
         if (event.target.value.length >= 2) {
             event.target.value = event.target.value.slice(0, 2);
         }
     }
 
+    function focusLocation() {
+        locationRef.current.focus();
+    }
+
     return (
         <Main>
-            <Menu display={display} animation={animationMenu}>
+            <Menu
+                display={display}
+                animation={animationMenu}
+                onAnimationEnd={focusLocation}
+            >
                 <CloseAndTitle>
                     <Title>Edit your search</Title>
                     <CloseIconDiv onClick={() => setOpenMenu(!openMenu)}>
-                        <CloseIcon color={"black"} />
+                        <CloseIcon color={theme.crossIcon} />
                     </CloseIconDiv>
                 </CloseAndTitle>
-
                 <SearchPillMenu>
                     <Form
                         onSubmit={currentSearchResults}
@@ -162,6 +189,7 @@ export default function Home() {
                                 onChange={(event) =>
                                     setLocation(event.target.value)
                                 }
+                                ref={locationRef}
                             ></LocationInputMenu>
                         </LocationDivMenu>
                         <GuestsDivMenu>
@@ -187,15 +215,10 @@ export default function Home() {
                                     key={index}
                                     onClick={setLocationOnClick}
                                 >
-                                    <img
+                                    <PinIcon
                                         alt="pin icon"
                                         src={pinIcon}
-                                        style={{
-                                            width: "4vh",
-                                            height: "4vh",
-                                            marginRight: "1vh",
-                                        }}
-                                    ></img>
+                                    ></PinIcon>
                                     {`${item.city}, ${item.country}`}
                                 </LocationItemList>
                             ))}
@@ -207,15 +230,10 @@ export default function Home() {
                                     key={index}
                                     onClick={setLocationOnClick}
                                 >
-                                    <img
+                                    <PinIcon
                                         alt="pin icon"
                                         src={pinIcon}
-                                        style={{
-                                            width: "4vh",
-                                            height: "4vh",
-                                            marginRight: "1vh",
-                                        }}
-                                    ></img>
+                                    ></PinIcon>
                                     {`${item.city}, ${item.country}`}
                                 </LocationItemList>
                             ))}
@@ -246,7 +264,9 @@ export default function Home() {
                     <LocationInput
                         type="text"
                         value={location}
-                        onClick={() => setOpenMenu(!openMenu)}
+                        onClick={() => {
+                            setOpenMenu(!openMenu);
+                        }}
                         placeholder="Add location"
                         readonly
                     ></LocationInput>
@@ -264,7 +284,7 @@ export default function Home() {
                 <Content>
                     {displayStays.map((item) => {
                         return (
-                            <Card key={item.id}>
+                            <Card key={item.id} className="hoverable">
                                 <StaysImg src={item.photo} alt={item.title} />
                                 <Container
                                     style={{
@@ -294,18 +314,14 @@ export default function Home() {
                                             justifyContent: "center",
                                         }}
                                     >
-                                        <img
+                                        <StarIcon
                                             src={starIcon}
                                             alt="Red start icon(rating)"
-                                            style={{
-                                                width: "2vh",
-                                                height: "2vh",
-                                            }}
-                                        ></img>
+                                        ></StarIcon>
                                         <Rating
                                             style={{
                                                 margin: 0,
-                                                marginLeft: "1vh",
+                                                marginLeft: "8px",
                                             }}
                                         >
                                             {item.rating}
@@ -335,6 +351,15 @@ export default function Home() {
         </Main>
     );
 }
+const PinIcon = styled.img`
+    width: calc(${(props) => props.theme.vh} * 3px);
+    height: calc(${(props) => props.theme.vh} * 3px);
+    margin-right: calc(${(props) => props.theme.vh} * 1.5px);
+`;
+const StarIcon = styled.img`
+    width: calc(${(props) => props.theme.vh} * 2.5px);
+    height: calc(${(props) => props.theme.vh} * 2.5px);
+`;
 const appear = keyframes`
     from{
         opacity:0;
@@ -373,15 +398,15 @@ const Form = styled.form`
 `;
 const NotFoundOrStartSearchText = styled.h2`
     margin: 0;
-    color: #eb5757;
+    color: ${(props) => props.theme.button.backgroundColor};
     width: 70vw;
     text-align: center;
     animation: 0.3s ${appear} ease;
 `;
 
 const StartSearch = styled.img`
-    width: 50vh;
-    height: 50vh;
+    width: calc(${(props) => props.theme.vh} * 50px);
+    height: calc(${(props) => props.theme.vh} * 50px);
     @media (max-width: 500px) {
         width: 80vw;
         height: 80vw;
@@ -394,15 +419,15 @@ const SuperHostText = styled.h2`
     font-size: 10px;
     line-height: 12px;
     text-transform: uppercase;
-    color: #4f4f4f;
+    color: ${(props) => props.theme.superHost.color};
     margin: 0;
 `;
 const SuperHost = styled.div`
-    padding-top: 1vh;
-    padding-bottom: 1vh;
-    padding-left: 2vh;
-    padding-right: 2vh;
-    margin-right: 1.5vh;
+    padding-top: calc(${(props) => props.theme.vh} * 1px);
+    padding-bottom: calc(${(props) => props.theme.vh} * 1px);
+    padding-left: calc(${(props) => props.theme.vh} * 2px);
+    padding-right: calc(${(props) => props.theme.vh} * 2px);
+    margin-right: calc(${(props) => props.theme.vh} * 1.5px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,7 +441,7 @@ const StayTitle = styled.h2`
     font-size: 14px;
     line-height: 17px;
     margin: 0;
-    color: #333333;
+    color: ${(props) => props.theme.stayTitle.color};
 `;
 const Rating = styled.h2`
     font-family: Montserrat;
@@ -424,8 +449,7 @@ const Rating = styled.h2`
     font-weight: 500;
     font-size: 12px;
     line-height: 15px;
-
-    color: #4f4f4f;
+    color: ${(props) => props.theme.superHost.color};
 `;
 const BedsAndType = styled.h2`
     display: flex;
@@ -438,7 +462,7 @@ const BedsAndType = styled.h2`
     font-weight: 500;
     font-size: 12px;
     line-height: 15px;
-    color: #828282;
+    color: ${(props) => props.theme.bedsAndType.color};
 `;
 const StaysImg = styled.img`
     border-radius: 24px;
@@ -469,8 +493,9 @@ const Content = styled.div`
     margin-top: 10%;
     width: 90%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-gap: 5vh;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
+    justify-content: center;
+    grid-gap: calc(${(props) => props.theme.vh} * 5px);
 `;
 const LocationItemList = styled.li`
     margin: 0;
@@ -482,27 +507,30 @@ const LocationItemList = styled.li`
     font-weight: normal;
     font-size: 14px;
     line-height: 18px;
-    margin-top: 1vh;
+    height: calc(${(props) => props.theme.vh} * 4px);
+    width: 100%;
+    margin-top: calc(${(props) => props.theme.vh} * 1.5px);
 `;
 const LocationList = styled.ul`
     margin: 0;
     padding: 0;
     list-style: none;
     overflow: hidden;
-    max-height: 44vh;
+    max-height: calc(${(props) => props.theme.vh} * 44px);
 `;
 
 const LocationListDiv = styled.div`
     width: 80%;
     flex: 1;
-    margin: 2vh auto 2vh auto;
+    margin: calc(${(props) => props.theme.vh} * 2px) auto
+        calc(${(props) => props.theme.vh} * 2px) auto;
     padding: 0;
 `;
 
 const SearchButtonMenu = styled.button`
     margin-top: auto;
     width: 35vw;
-    height: 7vh;
+    height: calc(${(props) => props.theme.vh} * 7px);
     background: rgba(235, 87, 87, 0.9);
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
@@ -510,8 +538,8 @@ const SearchButtonMenu = styled.button`
     outline: none;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 3vh;
-    color: white;
+    margin-bottom: calc(${(props) => props.theme.vh} * 3px);
+    color: ${(props) => props.theme.backgroundColor};
     font-family: Mulish;
     font-style: normal;
     font-weight: bold;
@@ -541,6 +569,8 @@ const GuestInput = styled.input`
     font-weight: normal;
     font-size: 14px;
     line-height: 18px;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
 `;
 const LocationInputMenu = styled.input`
     margin: 0;
@@ -552,40 +582,44 @@ const LocationInputMenu = styled.input`
     font-weight: normal;
     font-size: 14px;
     line-height: 18px;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
 `;
 const LocationDivMenu = styled.div`
     width: 100%;
-    height: 10vh;
+    height: calc(${(props) => props.theme.vh} * 10px);
     border-bottom: 1px solid #f2f2f2;
-    padding: 5% 10% 5% 10%;
+    padding: calc(${(props) => props.theme.vh} * 3px);
     display: flex;
     justify-content: space-between;
     flex-direction: column;
 `;
 const GuestsDivMenu = styled.div`
     width: 100%;
-    height: 10vh;
-    padding: 5.4% 10% 5% 10%;
+    height: calc(${(props) => props.theme.vh} * 10px);
+    padding: calc(${(props) => props.theme.vh} * 3px);
     display: flex;
     justify-content: space-between;
     flex-direction: column;
 `;
 const SearchPillMenu = styled.div`
     width: 90%;
-    height: 20vh;
-    background: #ffffff;
+    height: calc(${(props) => props.theme.vh} * 20px);
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 2vh;
+    margin-top: calc(${(props) => props.theme.vh} * 2px);
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
+    border: 2px solid ${(props) => props.theme.borderColor};
 `;
 const CloseIconDiv = styled.div`
     outline: none;
     border: none;
     cursor: pointer;
-    width: 3vh;
-    height: 3vh;
+    width: calc(${(props) => props.theme.vh} * 3px);
+    height: calc(${(props) => props.theme.vh} * 3px);
     background-image: url(${(props) => props.image});
     background-size: contain;
     background-repeat: no-repeat;
@@ -594,9 +628,9 @@ const CloseAndTitle = styled.div`
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
-    padding-left: 2vh;
-    padding-right: 2vh;
-    padding-top: 2vh;
+    padding-left: calc(${(props) => props.theme.vh} * 2px);
+    padding-right: calc(${(props) => props.theme.vh} * 2px);
+    padding-top: calc(${(props) => props.theme.vh} * 2px);
 `;
 const Title = styled.h5`
     margin: 0;
@@ -604,6 +638,7 @@ const Title = styled.h5`
     font-family: Mulish, san-serif;
     font-style: normal;
     font-weight: bold;
+    color: ${(props) => props.theme.title.editColor};
 `;
 
 const Menu = styled.div`
@@ -612,10 +647,10 @@ const Menu = styled.div`
     left: 0;
     display: ${(props) => props.display};
     width: 100vw;
-    height: 85vh;
+    height: calc(${(props) => props.theme.vh} * 85px);
     animation: 0.3s ${(props) => props.animation} ease-in;
     z-index: 1;
-    background-color: white;
+    background-color: ${(props) => props.theme.backgroundColor};
     flex-direction: column;
 `;
 const GrayMenuDown = styled.div`
@@ -623,37 +658,32 @@ const GrayMenuDown = styled.div`
     bottom: 0;
     left: 0;
     width: 100vw;
-    height: 15vh;
+    height: calc(${(props) => props.theme.vh} * 15px);
     display: ${(props) => props.display};
     animation: 0.3s ${(props) => props.animation} linear;
-    background-color: black;
+    background-color: ${(props) => props.theme.color};
     opacity: 0.5;
 `;
 
-const Location = styled.p`
-    margin: 0;
-    padding: 0;
-    width: fit-content;
-    color: ${(props) => props.changeColor.color}
-    font-size: 13px;
-`;
 const Main = styled.div`
-    padding-top: 10vh;
+    padding-top: calc(${(props) => props.theme.vh} * 10px);
     display: flex;
     flex-direction: column;
     flex: 1;
     align-items: center;
-    min-height: 100vh;
 `;
 const SearchPill = styled.div`
-    margin-top: 3vh;
+    margin-top: calc(${(props) => props.theme.vh} * 3px);
     width: 80%;
-    height: 10vh;
+    height: calc(${(props) => props.theme.vh} * 10px);
     background: #ffffff;
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     display: flex;
     flex-direction: row;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
+    border: 2px solid ${(props) => props.theme.borderColor};
 `;
 const LocationInput = styled.input`
     text-align: center;
@@ -667,7 +697,8 @@ const LocationInput = styled.input`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
 `;
 const Guests = styled.input`
     left: 46%;
@@ -678,6 +709,8 @@ const Guests = styled.input`
     border-radius: 16px 0 0 16px;
     outline: none;
     text-align: center;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
 `;
 const SearchButton = styled.input`
     margin: 0;
@@ -687,9 +720,10 @@ const SearchButton = styled.input`
     border-radius: 0 16px 16px 0;
     outline: none;
     border: none;
-    background-color: white;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
     background-image: url(/static/media/search.6facb5f7.svg);
-    background-size: 5vh;
+    background-size: calc(${(props) => props.theme.vh} * 5px);
     background-position: center center;
     background-repeat: no-repeat;
 `;

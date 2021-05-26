@@ -1,13 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { ThemeContext, UserContext } from "../../App";
+import { UserContext } from "../../App";
 import image from "../../images/mapa512.png";
 import hambugerIcon from "../../images/menu-icon.svg";
 import { Link } from "react-router-dom";
 import { logOut } from "../../services/auth";
 import closeIcon from "../../images/close.svg";
+import ThemeButton from "../ThemeButton";
 
-export default function Navbar() {
+export default function Navbar(props) {
     const [isOpen, setOpen] = useState(false);
     const [display, setDisplay] = useState("none");
     const [displayGray, setDisplayGray] = useState("none");
@@ -16,7 +17,14 @@ export default function Navbar() {
         animation: grow,
         type: "ease-out",
     });
-    const themeMode = useContext(ThemeContext);
+    function clickChangeTheme(event) {
+        if (event.target.localName === "div") {
+            event.target.firstChild.click();
+        } else if (event.target.localName === "h2") {
+            event.target.previousElementSibling.click();
+        }
+    }
+
     const user = useContext(UserContext);
 
     function showMenu() {
@@ -38,15 +46,15 @@ export default function Navbar() {
     }
 
     return (
-        <Row themeMode={themeMode}>
+        <Row>
             <Container>
                 <Logo src={image} alt="agenmap logo" />
-                <Title themeMode={themeMode}>
+                <Title>
                     <Link to="/">agenmap</Link>
                 </Title>
             </Container>
             <HamburgerImage image={hambugerIcon} onClick={showMenu} />
-            <Menu show={display} animation={animation} themeMode={themeMode}>
+            <Menu show={display} animation={animation}>
                 <LittleMenu>
                     <CloseIcon onClick={showMenu} image={closeIcon} />
                     <Link to="/" onClick={showMenu}>
@@ -58,7 +66,6 @@ export default function Navbar() {
                                 Profile
                             </Link>
                             <LogOutButton
-                                themeMode={themeMode}
                                 onClick={() => {
                                     showMenu();
                                     logOut();
@@ -73,6 +80,13 @@ export default function Navbar() {
                             Login
                         </Link>
                     )}
+                    <ChangeThemeDiv onClick={clickChangeTheme}>
+                        <ThemeButton
+                            changeTheme={props.changeTheme}
+                            image={props.image}
+                        />
+                        <ChangeThemeText>Change theme</ChangeThemeText>
+                    </ChangeThemeDiv>
                 </LittleMenu>
             </Menu>
             <GrayMenuSide
@@ -83,13 +97,27 @@ export default function Navbar() {
         </Row>
     );
 }
+const ChangeThemeDiv = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+`;
+const ChangeThemeText = styled.h2`
+    font-size: 20px;
+    margin: 0;
+    color: rgba(235, 87, 87, 0.9);
+    text-align: center;
+    font-weight: 400;
+    margin-left: 10px;
+`;
 const LogOutButton = styled.button`
     position: relative;
-    height: 5vh;
+    height: calc(${(props) => props.theme.vh} * 5px);
     width: 50%;
-    color: ${(props) => props.themeMode.button.color}
-    background-color: ${(props) => props.themeMode.button.backgroundColor}
-    border-radius: 3vh;
+    color: ${(props) => props.theme.button.color};
+    background-color: ${(props) => props.theme.button.backgroundColor};
+    border-radius: calc(${(props) => props.theme.vh} * 3px);
     border: none;
     cursor: pointer;
 `;
@@ -97,8 +125,8 @@ const CloseIcon = styled.div`
     outline: none;
     border: none;
     cursor: pointer;
-    width: 5vh;
-    height: 5vh;
+    width: calc(${(props) => props.theme.vh} * 5px);
+    height: calc(${(props) => props.theme.vh} * 5px);
     background-image: url(${(props) => props.image});
     background-size: contain;
     background-repeat: no-repeat;
@@ -107,24 +135,24 @@ const CloseIcon = styled.div`
 const Row = styled.div`
     display: flex;
     flex-direction: row;
-    color: ${(props) => props.themeMode.navbar.color};
+    color: ${(props) => props.theme.navbar.color};
     position: absolute;
     top: 0;
     width: 100%;
-    height: 10%;
+    height: calc(${(props) => props.theme.vh} * 10px);
     align-items: center;
     padding-left: 5%;
     padding-right: 5%;
 `;
 const Title = styled.h3`
     margin: 0;
-    margin-left: 2vh;
+    margin-left: calc(${(props) => props.theme.vh} * 2px);
     padding: 0;
     a {
         margin: 0;
         padding: 0;
         text-decoration: none;
-        color: ${(props) => props.themeMode.title.color};
+        color: ${(props) => props.theme.title.color};
     }
 `;
 const LittleMenu = styled.div`
@@ -145,17 +173,17 @@ const Container = styled.div`
     margin-right: auto;
 `;
 const Logo = styled.img`
-    width: 4vh;
-    height: 4vh;
+    width: calc(${(props) => props.theme.vh} * 4px);
+    height: calc(${(props) => props.theme.vh} * 4px);
 `;
 const HamburgerImage = styled.div`
-    width: 4vh;
-    height: 4vh;
+    width: calc(${(props) => props.theme.vh} * 4px);
+    height: calc(${(props) => props.theme.vh} * 4px);
     background-image: url(${(props) => props.image});
     background-size: contain;
     background-repeat: no-repeat;
     cursor: pointer;
-    margin-top: 2vh;
+    margin-top: calc(${(props) => props.theme.vh} * 2px);
 `;
 const grow = keyframes`
     from{
@@ -165,13 +193,13 @@ const grow = keyframes`
     }
     to{
         width: 60vw;
-        height: 100vh;
+        height: calc(${(props) => props.theme.vh} * 100px);;
     }
 `;
 const shrink = keyframes`
     from{
         width: 60vw;
-        height: 100vh;
+        height: calc(${(props) => props.theme.vh} * 100px);
     }
     to{
         width: 0%;
@@ -201,29 +229,28 @@ const GrayMenuSide = styled.div`
     top: 0;
     left: 0;
     width: 40vw;
-    height: 100vh;
+    height: calc(${(props) => props.theme.vh} * 100px);
     display: ${(props) => props.display};
     animation: 0.3s ${(props) => props.animation} linear;
-    background-color: black;
+    background-color: ${(props) => props.theme.color};
     opacity: 0.5;
 `;
-
+// prettier-ignore
 const Menu = styled.div`
     display: ${(props) => props.show};
-    animation: 0.3s ${(props) => props.animation.animation}
-        ${(props) => props.animation.type};
+    animation: 0.3s ${(props) => props.animation.animation} ${(props) => props.animation.type};
     position: absolute;
     width: 60vw;
-    height: 100vh;
+    height: calc(${(props) => props.theme.vh} * 100px);
     top: 0;
     right: 0;
-    background-color: white;
+    background-color: ${props => props.theme.backgroundColor};
     flex-direction: column;
     align-items: center;
     overflow: hidden;
     z-index: 1;
     div {
-        color: black;
+        color: ${(props) => props.theme.color};
     }
     a {
         margin: 0;
@@ -231,6 +258,6 @@ const Menu = styled.div`
         text-decoration: none;
         font-size: 20px;
         width: fit-content;
-        color: ${(props) => props.themeMode.title.color};
+        color: ${(props) => props.theme.title.color};
     }
 `;

@@ -1,8 +1,8 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { ThemeContext, UserContext } from "../../App";
+import { useContext, useRef, useState } from "react";
+import { UserContext } from "../../App";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import facebook from "../../images/facebook.png";
+import facebook from "../../images/facebook.svg";
 import twitter from "../../images/twitter.png";
 import github from "../../images/github.png";
 import google from "../../images/google.png";
@@ -17,7 +17,7 @@ import Loader from "react-loader-spinner";
 
 export default function Login() {
     const [data, setData] = useState();
-    const themeMode = useContext(ThemeContext);
+
     const user = useContext(UserContext);
     const emailRef = useRef();
     const passwordRef = useRef();
@@ -48,14 +48,14 @@ export default function Login() {
                 <Center>
                     <Card>
                         <Container style={{ justifyContent: "center" }}>
-                            <Titulo themeMode={themeMode}>Login</Titulo>
+                            <Titulo>Login</Titulo>
                         </Container>
                         <Column style={{ height: "auto" }}>
                             <Container
                                 style={{
                                     flexDirection: "column",
-                                    paddingLeft: "10%",
-                                    paddingRight: "10%",
+                                    paddingLeft: "30px",
+                                    paddingRight: "30px",
                                 }}
                             >
                                 <Form onSubmit={handleSubmit}>
@@ -68,15 +68,11 @@ export default function Login() {
                                     <Input
                                         type="password"
                                         placeholder="Password"
-                                        style={{ marginTop: "2vh" }}
+                                        style={{ marginTop: "16px" }}
                                         ref={passwordRef}
                                         onChange={handleChange}
                                     />
-                                    <SubmitInput
-                                        type="submit"
-                                        value="Log in"
-                                        themeMode={themeMode}
-                                    />
+                                    <SubmitInput type="submit" value="Log in" />
                                 </Form>
                             </Container>
                             <Container
@@ -84,38 +80,33 @@ export default function Login() {
                                     flexDirection: "column",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    marginTop: "3vh",
+                                    marginTop: "24px",
                                 }}
                             >
-                                <Info themeMode={themeMode}>
+                                <Info>
                                     <LS.NavFixedItemLink>
                                         <Link
                                             to={"#"}
-                                            style={{ fontSize: "2vh" }}
+                                            style={{ fontSize: "16px" }}
                                         >
                                             Forgot your password?
                                         </Link>
                                     </LS.NavFixedItemLink>
                                 </Info>
-                                <Info
-                                    themeMode={themeMode}
-                                    style={{ fontSize: "2vh" }}
-                                >
-                                    Or
-                                </Info>
-                                <Info themeMode={themeMode}>
+                                <Info style={{ fontSize: "16px" }}>Or</Info>
+                                <Info>
                                     <LS.NavFixedItemLink>
                                         <p
                                             style={{
                                                 margin: "0",
-                                                fontSize: "2vh",
+                                                fontSize: "16px",
                                             }}
                                         >
                                             Have an account?
                                         </p>
                                         <Link
                                             to={"#"}
-                                            style={{ fontSize: "2vh" }}
+                                            style={{ fontSize: "16px" }}
                                         >
                                             Sign up here
                                         </Link>
@@ -123,19 +114,17 @@ export default function Login() {
                                 </Info>
                             </Container>
                         </Column>
-
                         <Separator />
                         <Column>
                             <Row
                                 style={{
-                                    fontSize: "2vh",
-                                    color: "gray",
-                                    marginBottom: "2vh",
+                                    fontSize: "16px",
+                                    marginBottom: "16px",
                                 }}
                             >
                                 Log in with social media
                             </Row>
-                            <Row>
+                            <Row style={{ marginBottom: "10px" }}>
                                 <MediaIcons
                                     alt="Facebook logo"
                                     src={facebook}
@@ -185,12 +174,12 @@ const Container = styled.div`
 `;
 
 const Titulo = styled.h2`
-  color: ${(props) => props.themeMode.title.color}
-  margin: 0;
-  text-align: center;
+    color: ${(props) => props.theme.title.color};
+    margin: 0;
+    text-align: center;
 `;
 const Card = styled.div`
-    border-radius: 5vh;
+    border-radius: calc(${(props) => props.theme.vh} * 5px);
     width: 80%;
     height: 70%;
     display: flex;
@@ -198,42 +187,57 @@ const Card = styled.div`
     justify-content: space-around;
     align-items: center;
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+    padding-top: 20px;
+    max-width: 600px;
+    background-color: ${(props) => props.theme.backgroundColor};
+    color: ${(props) => props.theme.color};
+    border: 1px solid ${(props) => props.theme.borderColor};
 `;
 const Center = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
     align-content: center;
-    height: 100%;
+    height: calc(${(props) => props.theme.vh} * 100px);
+    background-color: ${(props) => props.theme.backgroundColor};
+    color: ${(props) => props.theme.color};
 `;
 
 const SubmitInput = styled.input`
-    border-radius: 5vh;
+    border-radius: calc(${(props) => props.theme.vh} * 5px);
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
     border: none;
     outline: none;
-    margin-top: 3vh;
-    padding: 1vh 0 1vh 0;
+    margin-top: calc(${(props) => props.theme.vh} * 3px);
+    padding: calc(${(props) => props.theme.vh} * 1px) 0
+        calc(${(props) => props.theme.vh} * 1px) 0;
 
     cursor: pointer;
-    background-color: ${(props) => props.themeMode.button.backgroundColor};
-    color: ${(props) => props.themeMode.button.color};
+    background-color: ${(props) => props.theme.button.backgroundColor};
+    color: ${(props) => props.theme.button.color};
 `;
 const Input = styled.input`
-    border-radius: 5vh;
+    border-radius: calc(${(props) => props.theme.vh} * 5px);
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
     border: none;
     outline: none;
-    padding-left: 2vh;
-    padding-right: 2vh;
-    padding: 1vh 2vh 1vh 2vh;
+    padding-left: calc(${(props) => props.theme.vh} * 2px);
+    padding-right: calc(${(props) => props.theme.vh} * 2px);
+    padding: calc(${(props) => props.theme.vh} * 1px)
+        calc(${(props) => props.theme.vh} * 2px)
+        calc(${(props) => props.theme.vh} * 1px)
+        calc(${(props) => props.theme.vh} * 2px);
+    text-align: center;
+    background-color: ${(props) => props.theme.input.backgroundColor};
+    color: ${(props) => props.theme.input.color};
+    border: 2px solid ${(props) => props.theme.borderColor};
 `;
 const Separator = styled.hr`
     margin: 0;
     width: 80%;
     height: 1px;
     border: none;
-    background-color: gray;
+    background-color: ${(props) => props.theme.info.color};
     opacity: 0.3;
 `;
 const Column = styled.div`
@@ -248,9 +252,10 @@ const Row = styled.div`
     justify-content: space-evenly;
     align-items: center;
     width: 70%;
+    color: ${(props) => props.theme.info.color};
 `;
 const Info = styled.span`
-    color: ${(props) => props.themeMode.info.color};
+    color: ${(props) => props.theme.info.color};
     margin: 0;
 `;
 const LS = {};
@@ -262,11 +267,12 @@ LS.NavFixedItemLink = styled.div`
         justify-content: center;
         align-items: center;
         text-decoration: none;
+        color: ${(props) => props.theme.linkColor};
     }
 `;
 const MediaIcons = styled.img`
     cursor: pointer;
-    width: 5vh;
-    height: 5vh;
+    width: calc(${(props) => props.theme.vh} * 5px);
+    height: calc(${(props) => props.theme.vh} * 5px);
 `;
 const LogOut = styled.button``;

@@ -8,43 +8,64 @@ import {
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import { createContext, useEffect, useState } from "react";
-import styled from "styled-components";
-import moon from "./images/moon.svg";
-import sun from "./images/sun.svg";
-import "./app.scss";
-import theme from "./config/themes";
+import { ThemeProvider, createGlobalStyle } from "styled-components";
+import themes from "./config/themes";
 import Navbar from "./components/Navbar/Navbar";
 import { useUserLoggedin } from "./services/auth";
-export const ThemeContext = createContext(theme);
+import moon from "./images/moon.svg";
+import sun from "./images/sun.svg";
+
 export const UserContext = createContext();
 
+const GlobalStyle = createGlobalStyle`
+
+
+html,
+body,
+#root {
+    min-height: calc(${(props) => props.theme.vh} * 100px);
+    height: 100%;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    margin: 0;
+    padding: 0;
+    background-color: ${(props) => props.theme.backgroundColor};
+}
+* {
+    font-family: "Montserrat", sans-serif;
+    box-sizing: border-box;
+}
+
+
+`;
+
 export function App() {
-    const [selectedTheme, setSelectedTheme] = useState(theme.light);
+    const [theme, setSelectedTheme] = useState(themes.light);
     const [image, setImage] = useState(sun);
     const [userLoggedIn, setUserLoggedIn] = useState(null);
-    const [initialVh, setInitialVh] = useState("");
     const user = useUserLoggedin();
 
-    useEffect(() => {
-        console.log(`${window.innerHeight * 0.01}px`);
-        setInitialVh(() => `${window.innerHeight * 0.01}px`);
-    }, []);
-    useEffect(() => {
-        window.addEventListener("resize", () => {
-            // We execute the same script as before
-            console.log(initialVh);
-        });
-    }, [initialVh]);
-
     function changeTheme() {
-        if (selectedTheme === theme.light) {
-            setSelectedTheme(theme.dark);
+        if (theme === themes.light) {
+            setSelectedTheme(themes.dark);
             setImage(moon);
+            localStorage.setItem("agenmapTheme", "dark");
         } else {
-            setSelectedTheme(theme.light);
+            setSelectedTheme(themes.light);
             setImage(sun);
+            localStorage.setItem("agenmapTheme", "light");
         }
     }
+    function retrieveSelectedTheme() {
+        let currentTheme = localStorage.getItem("agenmapTheme");
+        if (currentTheme === "dark") {
+            setSelectedTheme(themes.dark);
+            setImage(moon);
+        }
+    }
+    useEffect(() => {
+        retrieveSelectedTheme();
+    }, []);
 
     function isUserLoggedIn(newUser) {
         setUserLoggedIn(newUser);
@@ -55,10 +76,11 @@ export function App() {
     }, [user]);
 
     return (
-        <ThemeContext.Provider value={selectedTheme}>
-            <UserContext.Provider value={userLoggedIn}>
+        <UserContext.Provider value={userLoggedIn}>
+            <ThemeProvider theme={theme}>
+                <GlobalStyle />
                 <Router>
-                    <Navbar />
+                    <Navbar changeTheme={changeTheme} image={image} />
                     <Switch>
                         <Route exact path="/" component={Home} />
                         <Route
@@ -72,34 +94,8 @@ export function App() {
                         />
                         <Redirect to="/" />
                     </Switch>
-
-                    <ThemeButton
-                        onClick={changeTheme}
-                        img={image}
-                        selectedTheme={selectedTheme}
-                    ></ThemeButton>
                 </Router>
-            </UserContext.Provider>
-        </ThemeContext.Provider>
+            </ThemeProvider>
+        </UserContext.Provider>
     );
 }
-
-const ThemeButton = styled.button`
-    @media (max-width: 768px) {
-        display: none;
-    }
-    outline: none;
-    position: fixed;
-    bottom: 10%;
-    right: 10%;
-    width: 5vh;
-    height: 5vh;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background-image: url(${(props) => props.img});
-    background-repeat: no-repeat;
-    background-size: 3vh;
-    background-position: center;
-    background-color: ${(props) => props.selectedTheme.button.backgroundColor};
-`;
