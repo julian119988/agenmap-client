@@ -5,11 +5,11 @@ const theme = {
             color: "white;",
         },
         info: {
-            color: "gray;",
+            color: "lightgray;",
         },
         button: {
             backgroundColor: "rgba(235, 87, 87, 0.9);",
-            color: "white;",
+            color: "aliceblue;",
         },
         title: {
             color: "rgba(235, 87, 87, 0.9);",
@@ -17,16 +17,20 @@ const theme = {
         },
         superHost: {
             color: "white;",
-        },
-        bedsAndType: {
-            color: "#828282;",
+            borderColor: "lightgray",
         },
         stayTitle: {
-            color: "#333333;",
+            color: "aliceblue;",
         },
         input: {
             color: "black",
             backgroundColor: "aliceblue;",
+        },
+        li: {
+            color: "aliceblue",
+        },
+        image: {
+            filter: "filter: brightness(.8) contrast(1.2);",
         },
         backgroundColor: "#44484a;",
         color: "white;",
@@ -51,9 +55,7 @@ const theme = {
         },
         superHost: {
             color: "#4f4f4f;",
-        },
-        bedsAndType: {
-            color: "#828282;",
+            borderColor: "#4f4f4f",
         },
         stayTitle: {
             color: "#333333;",
@@ -62,7 +64,12 @@ const theme = {
             color: "black",
             backgroundColor: "white",
         },
-
+        li: {
+            color: "black",
+        },
+        image: {
+            filter: "",
+        },
         backgroundColor: "white;",
         color: "black;",
         borderColor: "transparent;",

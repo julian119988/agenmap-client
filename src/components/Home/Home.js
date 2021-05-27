@@ -4,7 +4,7 @@ import styled, { keyframes } from "styled-components";
 import searchIcon from "../../images/search.svg";
 import CloseIcon from "../../services/CloseIconColorChanger";
 import SearchIconColorChanger from "../../services/SearchIconColorChanger";
-import pinIcon from "../../images/pin.svg";
+import PinIcon from "../../services/PinIconColorChanger";
 import Loader from "react-loader-spinner";
 import starIcon from "../../images/star.svg";
 import startSearch from "../../images/startSearch.svg";
@@ -23,6 +23,7 @@ export default function Home() {
     const [notFound, setNotFound] = useState(null);
     const [theme, setTheme] = useState({
         crossIcon: "black",
+        pinIcon: "#4f4f4f",
     });
     const buttonRef = useRef();
     const locationRef = useRef();
@@ -37,7 +38,6 @@ export default function Home() {
     }, []);
     useEffect(() => {
         filterRepeatedStays();
-        console.log(document.getElementById("freepik_stories-house-searching"));
     }, [stays]);
 
     useEffect(() => {
@@ -68,10 +68,12 @@ export default function Home() {
         if (currentTheme === "dark") {
             setTheme({
                 crossIcon: "rgba(235,87,87,0.9)",
+                pinIcon: "aliceblue",
             });
         } else {
             setTheme({
                 crossIcon: "black",
+                pinIcon: "#4f4f4f",
             });
         }
     }
@@ -131,7 +133,24 @@ export default function Home() {
     }
 
     function setLocationOnClick(event) {
-        console.log(event.target);
+        if (event.target.nodeName === "LI") {
+            setLocation(event.target.textContent);
+        } else if (event.target.nodeName === "rect") {
+            setLocation(
+                event.target.ownerSVGElement.parentElement.nextSibling
+                    .textContent
+            );
+        } else if (event.target.nodeName === "path") {
+            setLocation(
+                event.target.ownerSVGElement.parentElement.nextSibling
+                    .textContent
+            );
+        } else if (event.target.nodeName === "circle") {
+            setLocation(
+                event.target.ownerSVGElement.parentElement.nextSibling
+                    .textContent
+            );
+        }
     }
     async function fetchData() {
         return await db.collection("stays").get();
@@ -215,25 +234,24 @@ export default function Home() {
                                     key={index}
                                     onClick={setLocationOnClick}
                                 >
-                                    <PinIcon
-                                        alt="pin icon"
-                                        src={pinIcon}
-                                    ></PinIcon>
+                                    <PinIconDiv>
+                                        <PinIcon color={theme.pinIcon} />
+                                    </PinIconDiv>
+
                                     {`${item.city}, ${item.country}`}
                                 </LocationItemList>
                             ))}
                         </LocationList>
-                    ) : filteredStays ? (
+                    ) : filteredStays[0] ? (
                         <LocationList>
                             {filteredStays.map((item, index) => (
                                 <LocationItemList
                                     key={index}
                                     onClick={setLocationOnClick}
                                 >
-                                    <PinIcon
-                                        alt="pin icon"
-                                        src={pinIcon}
-                                    ></PinIcon>
+                                    <PinIconDiv>
+                                        <PinIcon color={theme.pinIcon} />
+                                    </PinIconDiv>
                                     {`${item.city}, ${item.country}`}
                                 </LocationItemList>
                             ))}
@@ -351,7 +369,9 @@ export default function Home() {
         </Main>
     );
 }
-const PinIcon = styled.img`
+
+const PinIconDiv = styled.div`
+    display: flex;
     width: calc(${(props) => props.theme.vh} * 3px);
     height: calc(${(props) => props.theme.vh} * 3px);
     margin-right: calc(${(props) => props.theme.vh} * 1.5px);
@@ -431,7 +451,7 @@ const SuperHost = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #4f4f4f;
+    border: 1px solid ${(props) => props.theme.superHost.borderColor};
     border-radius: 12px;
 `;
 const StayTitle = styled.h2`
@@ -462,13 +482,15 @@ const BedsAndType = styled.h2`
     font-weight: 500;
     font-size: 12px;
     line-height: 15px;
-    color: ${(props) => props.theme.bedsAndType.color};
+    color: ${(props) => props.theme.info.color};
 `;
 const StaysImg = styled.img`
     border-radius: 24px;
     width: 100%;
     height: 250px;
     object-fit: cover;
+    ${(props) => props.theme.image.filter}
+    z-index: 0;
 `;
 const Card = styled.div`
     display: flex;
@@ -507,6 +529,7 @@ const LocationItemList = styled.li`
     font-weight: normal;
     font-size: 14px;
     line-height: 18px;
+    color: ${(props) => props.theme.li.color};
     height: calc(${(props) => props.theme.vh} * 4px);
     width: 100%;
     margin-top: calc(${(props) => props.theme.vh} * 1.5px);
@@ -539,7 +562,7 @@ const SearchButtonMenu = styled.button`
     margin-left: auto;
     margin-right: auto;
     margin-bottom: calc(${(props) => props.theme.vh} * 3px);
-    color: ${(props) => props.theme.backgroundColor};
+    color: ${(props) => props.theme.button.color};
     font-family: Mulish;
     font-style: normal;
     font-weight: bold;

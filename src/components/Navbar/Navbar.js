@@ -234,6 +234,7 @@ const GrayMenuSide = styled.div`
     animation: 0.3s ${(props) => props.animation} linear;
     background-color: ${(props) => props.theme.color};
     opacity: 0.5;
+    z-index: 1;
 `;
 // prettier-ignore
 const Menu = styled.div`
@@ -248,7 +249,7 @@ const Menu = styled.div`
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    z-index: 1;
+    z-index: 2;
     div {
         color: ${(props) => props.theme.color};
     }
