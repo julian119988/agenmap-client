@@ -518,6 +518,7 @@ const Content = styled.div`
     grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
     justify-content: center;
     grid-gap: calc(${(props) => props.theme.vh} * 5px);
+    margin-bottom: 10%;
 `;
 const LocationItemList = styled.li`
     margin: 0;

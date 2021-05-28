@@ -11,10 +11,11 @@ import {
     facebookAuth,
     twitterAuth,
     githubAuth,
-    emailAuth,
+    createAccount,
     logOut,
 } from "../../services/auth";
 import Loader from "react-loader-spinner";
+import { store } from "react-notifications-component";
 
 export default function Login() {
     const [data, setData] = useState();
@@ -22,13 +23,42 @@ export default function Login() {
     const user = useContext(UserContext);
     const emailRef = useRef();
     const passwordRef = useRef();
+    const secondPasswordRef = useRef();
 
     useEffect(() => {
         console.log(user);
     }, [user]);
+
     function handleSubmit(e) {
         e.preventDefault();
-        emailAuth(data);
+        if (passwordRef.current.value === secondPasswordRef.current.value) {
+            createAccount(data);
+        } else {
+            store.addNotification({
+                title: "Error!",
+                message: "The passwords are different",
+                type: "danger",
+                insert: "top",
+                container: "top-center",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                    duration: 3500,
+                },
+                slidingEnter: {
+                    swipe: {
+                        duration: 400,
+                        timingFunction: "ease-out",
+                        delay: 0,
+                    },
+                    fade: {
+                        duration: 400,
+                        timingFunction: "ease-out",
+                        delay: 0,
+                    },
+                },
+            });
+        }
     }
     function handleChange() {
         setData({
@@ -52,7 +82,7 @@ export default function Login() {
                 <Center>
                     <Card>
                         <Container style={{ justifyContent: "center" }}>
-                            <Titulo>Login</Titulo>
+                            <Titulo>Sign Up</Titulo>
                         </Container>
                         <Column style={{ height: "auto" }}>
                             <Container
@@ -76,46 +106,18 @@ export default function Login() {
                                         ref={passwordRef}
                                         onChange={handleChange}
                                     />
-                                    <SubmitInput type="submit" value="Log in" />
+                                    <Input
+                                        type="password"
+                                        placeholder="Confirm password"
+                                        style={{ marginTop: "16px" }}
+                                        ref={secondPasswordRef}
+                                        onChange={handleChange}
+                                    />
+                                    <SubmitInput
+                                        type="submit"
+                                        value="Create account"
+                                    />
                                 </Form>
-                            </Container>
-                            <Container
-                                style={{
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginTop: "24px",
-                                }}
-                            >
-                                <Info>
-                                    <LS.NavFixedItemLink>
-                                        <Link
-                                            to={"#"}
-                                            style={{ fontSize: "16px" }}
-                                        >
-                                            Forgot your password?
-                                        </Link>
-                                    </LS.NavFixedItemLink>
-                                </Info>
-                                <Info style={{ fontSize: "16px" }}>Or</Info>
-                                <Info>
-                                    <LS.NavFixedItemLink>
-                                        <p
-                                            style={{
-                                                margin: "0",
-                                                fontSize: "16px",
-                                            }}
-                                        >
-                                            Have an account?
-                                        </p>
-                                        <Link
-                                            to="/signup"
-                                            style={{ fontSize: "16px" }}
-                                        >
-                                            Sign up here
-                                        </Link>
-                                    </LS.NavFixedItemLink>
-                                </Info>
                             </Container>
                         </Column>
                         <Separator />

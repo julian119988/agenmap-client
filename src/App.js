@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
+import SignUp from "./components/SignUp/SignUp";
 import { createContext, useEffect, useState } from "react";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import themes from "./config/themes";
@@ -14,6 +15,8 @@ import Navbar from "./components/Navbar/Navbar";
 import { useUserLoggedin } from "./services/auth";
 import moon from "./images/moon.svg";
 import sun from "./images/sun.svg";
+import ReactNotification from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 
 export const UserContext = createContext();
 
@@ -42,7 +45,7 @@ body,
 export function App() {
     const [theme, setSelectedTheme] = useState(themes.light);
     const [image, setImage] = useState(sun);
-    const [userLoggedIn, setUserLoggedIn] = useState(null);
+    const [userLoggedIn, setUserLoggedIn] = useState(undefined);
     const user = useUserLoggedin();
 
     function changeTheme() {
@@ -67,12 +70,10 @@ export function App() {
         retrieveSelectedTheme();
     }, []);
 
-    function isUserLoggedIn(newUser) {
-        setUserLoggedIn(newUser);
-    }
-
     useEffect(() => {
-        isUserLoggedIn(user);
+        if (user !== undefined) {
+            setUserLoggedIn(user);
+        }
     }, [user]);
 
     return (
@@ -80,18 +81,12 @@ export function App() {
             <ThemeProvider theme={theme}>
                 <GlobalStyle />
                 <Router>
+                    <ReactNotification />
                     <Navbar changeTheme={changeTheme} image={image} />
                     <Switch>
                         <Route exact path="/" component={Home} />
-                        <Route
-                            path="/login"
-                            render={() => (
-                                <Login
-                                    changeTheme={changeTheme}
-                                    addUser={userLoggedIn}
-                                />
-                            )}
-                        />
+                        <Route path="/login" component={Login} />
+                        <Route path="/signup" component={SignUp} />
                         <Redirect to="/" />
                     </Switch>
                 </Router>
