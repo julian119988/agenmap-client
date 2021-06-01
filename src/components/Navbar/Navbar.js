@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { logOut } from "../../services/auth";
 import closeIcon from "../../images/close.svg";
 import ThemeButton from "../ThemeButton";
+import logOutSvg from "../../images/logout.svg";
 
 export default function Navbar(props) {
     const [isOpen, setOpen] = useState(false);
@@ -66,6 +67,7 @@ export default function Navbar(props) {
                                 Profile
                             </Link>
                             <LogOutButton
+                                src={logOutSvg}
                                 onClick={() => {
                                     showMenu();
                                     logOut();
@@ -85,10 +87,40 @@ export default function Navbar(props) {
                             changeTheme={props.changeTheme}
                             image={props.image}
                         />
-                        <ChangeThemeText>Change theme</ChangeThemeText>
+                        <ChangeThemeText>Theme</ChangeThemeText>
                     </ChangeThemeDiv>
                 </LittleMenu>
             </Menu>
+            <PcRightSideMenu>
+                {user ? (
+                    <>
+                        <Link to="/" onClick={showMenu}>
+                            Profile
+                        </Link>
+                        <LogOutButton
+                            src={logOutSvg}
+                            onClick={() => {
+                                showMenu();
+                                logOut();
+                            }}
+                            to="/login"
+                        >
+                            Log Out
+                        </LogOutButton>
+                    </>
+                ) : (
+                    <Link onClick={showMenu} to="/login">
+                        Login
+                    </Link>
+                )}
+                <ChangeThemeDiv onClick={clickChangeTheme}>
+                    <ThemeButton
+                        changeTheme={props.changeTheme}
+                        image={props.image}
+                    />
+                    <ChangeThemeText>Theme</ChangeThemeText>
+                </ChangeThemeDiv>
+            </PcRightSideMenu>
             <GrayMenuSide
                 display={displayGray}
                 animation={animationGray}
@@ -97,11 +129,31 @@ export default function Navbar(props) {
         </Row>
     );
 }
+const PcRightSideMenu = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    div {
+        color: ${(props) => props.theme.color};
+    }
+    a {
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        font-size: 20px;
+        width: fit-content;
+        color: ${(props) => props.theme.title.color};
+    }
+    @media (max-width: 899px) {
+        display: none;
+    }
+`;
 const ChangeThemeDiv = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 `;
 const ChangeThemeText = styled.h2`
     font-size: 20px;
@@ -109,7 +161,7 @@ const ChangeThemeText = styled.h2`
     color: rgba(235, 87, 87, 0.9);
     text-align: center;
     font-weight: 400;
-    margin-left: 10px;
+    margin-left: 8px;
 `;
 const LogOutButton = styled.button`
     position: relative;
@@ -120,6 +172,20 @@ const LogOutButton = styled.button`
     border-radius: calc(${(props) => props.theme.vh} * 3px);
     border: none;
     cursor: pointer;
+    background-image: url(${(props) => props.src});
+    background-repeat: no-repeat;
+    background-size: calc(${(props) => props.theme.vh} * 2px)
+        calc(${(props) => props.theme.vh} * 2px);
+    background-position-y: center;
+    background-position-x: 10px;
+    @media (min-width: 900px) {
+        height: calc(${(props) => props.theme.vh} * 5px);
+        width: calc(${(props) => props.theme.vh} * 15px);
+        margin-right: 20px;
+        margin-left: 20px;
+        background-size: calc(${(props) => props.theme.vh} * 3px)
+            calc(${(props) => props.theme.vh} * 3px);
+    }
 `;
 const CloseIcon = styled.div`
     outline: none;
@@ -184,6 +250,9 @@ const HamburgerImage = styled.div`
     background-repeat: no-repeat;
     cursor: pointer;
     margin-top: calc(${(props) => props.theme.vh} * 2px);
+    @media (min-width: 900px) {
+        display: none;
+    }
 `;
 const grow = keyframes`
     from{
@@ -235,6 +304,9 @@ const GrayMenuSide = styled.div`
     background-color: ${(props) => props.theme.color};
     opacity: 0.5;
     z-index: 1;
+    @media (min-width: 900px) {
+        display: none;
+    }
 `;
 // prettier-ignore
 const Menu = styled.div`
@@ -260,5 +332,8 @@ const Menu = styled.div`
         font-size: 20px;
         width: fit-content;
         color: ${(props) => props.theme.title.color};
+    }
+    @media(min-width: 900px){
+        display: none;
     }
 `;

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../../App";
 import styled from "styled-components";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import facebook from "../../images/facebook.svg";
 import twitter from "../../images/twitter.png";
 import github from "../../images/github.png";
@@ -19,7 +19,6 @@ import { store } from "react-notifications-component";
 
 export default function Login() {
     const [data, setData] = useState();
-
     const user = useContext(UserContext);
     const emailRef = useRef();
     const passwordRef = useRef();
@@ -120,6 +119,11 @@ export default function Login() {
                                 </Form>
                             </Container>
                         </Column>
+                        <LS.NavFixedItemLink>
+                            <Link to={"/login"} style={{ fontSize: "16px" }}>
+                                Go back
+                            </Link>
+                        </LS.NavFixedItemLink>
                         <Separator />
                         <Column>
                             <Row

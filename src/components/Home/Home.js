@@ -8,6 +8,7 @@ import PinIcon from "../../services/PinIconColorChanger";
 import Loader from "react-loader-spinner";
 import starIcon from "../../images/star.svg";
 import startSearch from "../../images/startSearch.svg";
+import { useHistory } from "react-router";
 
 export default function Home() {
     const [guests, setGuests] = useState(0);
@@ -27,6 +28,7 @@ export default function Home() {
     });
     const buttonRef = useRef();
     const locationRef = useRef();
+    const history = useHistory();
 
     useEffect(async () => {
         const data = await fetchData();
@@ -302,7 +304,11 @@ export default function Home() {
                 <Content>
                     {displayStays.map((item) => {
                         return (
-                            <Card key={item.id} className="hoverable">
+                            <Card
+                                key={item.id}
+                                className="hoverable"
+                                onClick={() => history.push(`/stay/${item.id}`)}
+                            >
                                 <StaysImg src={item.photo} alt={item.title} />
                                 <Container
                                     style={{

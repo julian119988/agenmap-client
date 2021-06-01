@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 const Button = styled.button`
     outline: none;
-    width: calc(${(props) => props.theme.vh} * 4px);
-    height: calc(${(props) => props.theme.vh} * 4px);
+    width: calc(${(props) => props.theme.vh} * 3px);
+    height: calc(${(props) => props.theme.vh} * 3px);
     border-radius: 50%;
     border: none;
     cursor: pointer;

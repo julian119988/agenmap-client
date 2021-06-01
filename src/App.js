@@ -8,6 +8,7 @@ import {
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import SignUp from "./components/SignUp/SignUp";
+import StayInfo from "./components/StayInfo/StayInfo";
 import { createContext, useEffect, useState } from "react";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import themes from "./config/themes";
@@ -87,6 +88,7 @@ export function App() {
                         <Route exact path="/" component={Home} />
                         <Route path="/login" component={Login} />
                         <Route path="/signup" component={SignUp} />
+                        <Route path="/stay/:id" component={StayInfo} />
                         <Redirect to="/" />
                     </Switch>
                 </Router>
