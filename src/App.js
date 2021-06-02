@@ -1,9 +1,8 @@
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect,
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
 } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
@@ -44,55 +43,55 @@ body,
 `;
 
 export function App() {
-    const [theme, setSelectedTheme] = useState(themes.light);
-    const [image, setImage] = useState(sun);
-    const [userLoggedIn, setUserLoggedIn] = useState(undefined);
-    const user = useUserLoggedin();
+  const [theme, setSelectedTheme] = useState(themes.light);
+  const [image, setImage] = useState(sun);
+  const [userLoggedIn, setUserLoggedIn] = useState(undefined);
+  const user = useUserLoggedin();
 
-    function changeTheme() {
-        if (theme === themes.light) {
-            setSelectedTheme(themes.dark);
-            setImage(moon);
-            localStorage.setItem("agenmapTheme", "dark");
-        } else {
-            setSelectedTheme(themes.light);
-            setImage(sun);
-            localStorage.setItem("agenmapTheme", "light");
-        }
+  function changeTheme() {
+    if (theme === themes.light) {
+      setSelectedTheme(themes.dark);
+      setImage(moon);
+      localStorage.setItem("agenmapTheme", "dark");
+    } else {
+      setSelectedTheme(themes.light);
+      setImage(sun);
+      localStorage.setItem("agenmapTheme", "light");
     }
-    function retrieveSelectedTheme() {
-        let currentTheme = localStorage.getItem("agenmapTheme");
-        if (currentTheme === "dark") {
-            setSelectedTheme(themes.dark);
-            setImage(moon);
-        }
+  }
+  function retrieveSelectedTheme() {
+    let currentTheme = localStorage.getItem("agenmapTheme");
+    if (currentTheme === "dark") {
+      setSelectedTheme(themes.dark);
+      setImage(moon);
     }
-    useEffect(() => {
-        retrieveSelectedTheme();
-    }, []);
+  }
+  useEffect(() => {
+    retrieveSelectedTheme();
+  }, []);
 
-    useEffect(() => {
-        if (user !== undefined) {
-            setUserLoggedIn(user);
-        }
-    }, [user]);
+  useEffect(() => {
+    if (user !== undefined) {
+      setUserLoggedIn(user);
+    }
+  }, [user]);
 
-    return (
-        <UserContext.Provider value={userLoggedIn}>
-            <ThemeProvider theme={theme}>
-                <GlobalStyle />
-                <Router>
-                    <ReactNotification />
-                    <Navbar changeTheme={changeTheme} image={image} />
-                    <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route path="/login" component={Login} />
-                        <Route path="/signup" component={SignUp} />
-                        <Route path="/stay/:id" component={StayInfo} />
-                        <Redirect to="/" />
-                    </Switch>
-                </Router>
-            </ThemeProvider>
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider value={userLoggedIn}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <Router>
+          <ReactNotification />
+          <Navbar changeTheme={changeTheme} image={image} />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={SignUp} />
+            <Route path="/stay/:id" component={StayInfo} />
+            <Redirect to="/" />
+          </Switch>
+        </Router>
+      </ThemeProvider>
+    </UserContext.Provider>
+  );
 }

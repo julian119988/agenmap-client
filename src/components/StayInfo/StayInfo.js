@@ -12,7 +12,7 @@ export default function StayInfo() {
   const [data, setData] = useState(undefined);
   const { id } = useParams();
   useEffect(() => {
-    fetchStay();
+    fetchStay(); // eslint-disable-next-line
   }, []);
 
   async function fetchStay() {
