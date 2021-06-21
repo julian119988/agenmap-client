@@ -17,6 +17,7 @@ import moon from "./images/moon.svg";
 import sun from "./images/sun.svg";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
+import Profile from "./components/Profile/Profile";
 
 export const UserContext = createContext();
 
@@ -88,6 +89,7 @@ export function App() {
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp} />
             <Route path="/stay/:id" component={StayInfo} />
+            <Route path="/profile/:id" component={Profile} />
             <Redirect to="/" />
           </Switch>
         </Router>

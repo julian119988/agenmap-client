@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { UserContext } from "../../App";
 import image from "../../images/mapa512.png";
@@ -8,12 +8,14 @@ import { logOut } from "../../services/auth";
 import closeIcon from "../../images/close.svg";
 import ThemeButton from "../ThemeButton";
 import logOutSvg from "../../images/logout.svg";
+import db from "../../services/db";
 
 export default function Navbar(props) {
   const [isOpen, setOpen] = useState(false);
   const [display, setDisplay] = useState("none");
   const [displayGray, setDisplayGray] = useState("none");
   const [animationGray, setAnimationGray] = useState(appear);
+  const [userId, setUserId] = useState(null);
   const [animation, setAnimation] = useState({
     animation: grow,
     type: "ease-out",
@@ -27,6 +29,20 @@ export default function Navbar(props) {
   }
 
   const user = useContext(UserContext);
+
+  useEffect(() => {
+    if (user) {
+      db.collection("users")
+        .where("email", "==", user.email)
+        .get()
+        .then((item) => {
+          item.forEach((element) => {
+            setUserId(element.id);
+          });
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [user]);
 
   function showMenu() {
     if (isOpen) {
@@ -63,7 +79,12 @@ export default function Navbar(props) {
           </Link>
           {user ? (
             <>
-              <Link to="/" onClick={showMenu}>
+              <Link
+                onClick={() => {
+                  showMenu();
+                }}
+                to={`/profile/${userId}`}
+              >
                 Profile
               </Link>
               <LogOutButton
@@ -91,9 +112,7 @@ export default function Navbar(props) {
       <PcRightSideMenu>
         {user ? (
           <>
-            <Link to="/" onClick={showMenu}>
-              Profile
-            </Link>
+            <Link to={`/profile/${userId}`}>Profile</Link>
             <LogOutButton
               src={logOutSvg}
               onClick={() => {
@@ -148,6 +167,7 @@ const ChangeThemeDiv = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  margin-left: 20px;
 `;
 const ChangeThemeText = styled.h2`
   font-size: 20px;
@@ -155,7 +175,7 @@ const ChangeThemeText = styled.h2`
   color: rgba(235, 87, 87, 0.9);
   text-align: center;
   font-weight: 400;
-  margin-left: 8px;
+  margin-left: 6px;
 `;
 const LogOutButton = styled.button`
   position: relative;
@@ -175,7 +195,6 @@ const LogOutButton = styled.button`
   @media (min-width: 900px) {
     height: calc(${(props) => props.theme.vh} * 5px);
     width: calc(${(props) => props.theme.vh} * 15px);
-    margin-right: 20px;
     margin-left: 20px;
     background-size: calc(${(props) => props.theme.vh} * 3px)
       calc(${(props) => props.theme.vh} * 3px);

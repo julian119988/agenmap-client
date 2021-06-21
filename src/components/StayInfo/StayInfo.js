@@ -42,7 +42,9 @@ export default function StayInfo() {
           });
         })
         .catch((error) => console.log(error));
-    }
+    } else {
+      setIsSaved(false);
+    } // eslint-disable-next-line
   }, [user]);
   async function fetchStay() {
     const response = await db.collection("stays").doc(id).get();
@@ -81,7 +83,9 @@ export default function StayInfo() {
     }
   }
   function saveStay() {
-    setIsSaved(null);
+    if (user) {
+      setIsSaved(null);
+    }
     db.collection("users")
       .where("email", "==", user.email)
       .get()
@@ -119,7 +123,9 @@ export default function StayInfo() {
   }
 
   function deleteStay() {
-    setIsSaved(null);
+    if (user) {
+      setIsSaved(null);
+    }
     db.collection("users")
       .where("email", "==", user.email)
       .get()
@@ -197,51 +203,52 @@ export default function StayInfo() {
               )}
             </StaysImgDiv>
           </Container>
-          <Container
-            row
-            padding
-            center
-            width
-            between
-            superHost={data.superHost}
-            rating
-          >
-            {data.superHost ? (
-              <SuperHost>
-                <SuperHostText>Super Host</SuperHostText>
-              </SuperHost>
-            ) : null}
-            <Container row center left>
-              <StarIcon src={starIcon} alt="Red start icon(rating)"></StarIcon>
-              <Rating>{data.rating}</Rating>
-            </Container>
-          </Container>
-          <Container padding width row center>
-            <Container style={{ width: "25px", height: "25px" }}>
-              <img src={homeIcon} alt="House icon" />
-            </Container>
-            <Type style={{ marginLeft: "7px" }}>{data.type}</Type>
-          </Container>
-          <Container padding width row center>
-            <Container row center>
-              <Container style={{ width: "25px", height: "25px" }}>
-                <img src={bedIcon} alt="Bed icon" />
+          <Container row width>
+            <Container half>
+              <Container row center width between>
+                {data.superHost ? (
+                  <SuperHost margin>
+                    <SuperHostText>Super Host</SuperHostText>
+                  </SuperHost>
+                ) : null}
               </Container>
-              <Type style={{ marginLeft: "7px" }}>
-                {data.beds === null
-                  ? `Beds up to ${data.maxGuests}`
-                  : `${data.beds} beds`}
-              </Type>
-            </Container>
-          </Container>
-          <Container padding width row center>
-            <Container row center>
-              <Container style={{ width: "25px", height: "25px" }}>
-                <PinIcon color="rgba(235,87,87,0.9)" />
+              <Container width row center padding>
+                <Container style={{ width: "25px", height: "25px" }}>
+                  <img src={homeIcon} alt="House icon" />
+                </Container>
+                <Type style={{ marginLeft: "7px" }}>{data.type}</Type>
               </Container>
-              <Type
-                style={{ marginLeft: "4px" }}
-              >{`${data.city}, ${data.country}`}</Type>
+              <Container width row center padding>
+                <Container row center>
+                  <Container style={{ width: "25px", height: "25px" }}>
+                    <img src={bedIcon} alt="Bed icon" />
+                  </Container>
+                  <Type style={{ marginLeft: "7px" }}>
+                    {data.beds === null
+                      ? `Beds up to ${data.maxGuests}`
+                      : `${data.beds} beds`}
+                  </Type>
+                </Container>
+              </Container>
+              <Container width row center padding>
+                <Container row center>
+                  <Container style={{ width: "25px", height: "25px" }}>
+                    <PinIcon color="rgba(235,87,87,0.9)" />
+                  </Container>
+                  <Type
+                    style={{ marginLeft: "4px" }}
+                  >{`${data.city}, ${data.country}`}</Type>
+                </Container>
+              </Container>
+            </Container>
+            <Container row center half JFlexEnd AFlexStart>
+              <Container center row padding>
+                <StarIcon
+                  src={starIcon}
+                  alt="Red start icon(rating)"
+                ></StarIcon>
+                <Rating>{data.rating}</Rating>
+              </Container>
             </Container>
           </Container>
         </>
@@ -298,9 +305,12 @@ const Container = styled.div`
   ${(props) => (props.padding ? "padding: 15px 30px 15px 30px;" : null)}
   ${(props) => (props.width ? "width: 100%;" : null)}
   ${(props) => (props.between ? "justify-content: space-between;" : null)}
+  ${(props) => (props.JFlexEnd ? "justify-content: flex-end;" : null)}
+  ${(props) => (props.AFlexStart ? "align-items: flex-start;" : null)}
   ${(props) => (props.left ? "margin-left: auto;" : null)}
   ${(props) =>
     !props.superHost && props.rating ? "position: absolute;" : null}
+    ${(props) => (props.half ? "width: 50%;" : null)}
 `;
 const Center = styled.div`
   display: flex;
@@ -312,10 +322,13 @@ const Center = styled.div`
 const StaysImgDiv = styled.div`
   border-radius: 24px;
   width: 90%;
-  height: 250px;
+  max-height: 29vw;
   z-index: 0;
   margin: 10px 0 10px 0;
   position: relative;
+  @media (max-width: 900px) {
+    max-height: 50vw;
+  }
 `;
 const StaysImg = styled.img`
   ${(props) => props.theme.image.filter}
@@ -341,6 +354,7 @@ const SuperHost = styled.div`
   padding-bottom: calc(${(props) => props.theme.vh} * 1px);
   padding-left: calc(${(props) => props.theme.vh} * 2px);
   padding-right: calc(${(props) => props.theme.vh} * 2px);
+  ${(props) => (props.margin ? "margin: 15px 30px 15px 30px;" : null)}
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,6 +376,8 @@ const StayTitle = styled.h2`
 `;
 const Rating = styled.h2`
   margin-left: 7px;
+  margin-top: 0;
+  margin-bottom: 0;
   font-family: Montserrat;
   font-style: normal;
   font-weight: 500;
